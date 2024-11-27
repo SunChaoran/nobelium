@@ -1,5 +1,5 @@
 const BLOG = {
-  title: 'Chaoran's Notion',
+  title: 'Chaoran\'s Notion',
   author: 'Chaoran Sun',
   email: 'mail@sunchaoran.com',
   link: 'https://nobelium.vercel.app',

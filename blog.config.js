@@ -1,5 +1,5 @@
 const BLOG = {
-  title: 'Chaoran\'s Notion',
+  title: 'Chaoran\'s Blog',
   author: 'Chaoran Sun',
   email: 'mail@sunchaoran.com',
   link: 'https://blog.chaoran.app',
@@ -12,9 +12,10 @@ const BLOG = {
   darkBackground: '#18181B', // use hex value, don't forget '#'
   path: '', // leave this empty unless you want to deploy Nobelium in a folder
   since: 2024, // If leave this empty, current year will be used.
-  postsPerPage: 9,
+  postsPerPage: 8,
   sortByDate: false,
   showAbout: true,
+  aboutLink: 'https://bento.me/sunchaoran',
   showArchive: true,
   autoCollapsedNavBar: false, // The automatically collapsed navigation bar
   ogImageGenerateURL: 'https://og-image-craigary.vercel.app', // The link to generate OG image, don't end with a slash
@@ -48,7 +49,7 @@ const BLOG = {
       distractionFreeMode: false
     },
     utterancesConfig: {
-      repo: ''
+      repo: 'https://github.com/SunChaoran/notion-blog'
     },
     cusdisConfig: {
       appId: '', // data-app-id

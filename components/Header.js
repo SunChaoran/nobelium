@@ -1,18 +1,24 @@
-import { forwardRef, useCallback, useEffect, useRef, useState } from 'react'
+import {forwardRef, useCallback, useEffect, useRef, useState} from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { useConfig } from '@/lib/config'
-import { useLocale } from '@/lib/locale'
+import {useConfig} from '@/lib/config'
+import {useLocale} from '@/lib/locale'
 import useTheme from '@/lib/theme'
 
 const NavBar = () => {
   const BLOG = useConfig()
   const locale = useLocale()
   const links = [
-    { id: 0, name: locale.NAV.INDEX, to: BLOG.path || '/', show: true },
-    { id: 1, name: locale.NAV.ABOUT, to: '/about', show: BLOG.showAbout },
-    { id: 2, name: locale.NAV.RSS, to: '/feed', show: true, external: true },
-    { id: 3, name: locale.NAV.SEARCH, to: '/search', show: true }
+    {id: 0, name: locale.NAV.INDEX, to: BLOG.path || '/', show: true},
+    {
+      id: 1,
+      name: locale.NAV.ABOUT,
+      to: BLOG.aboutLink ? BLOG.aboutLink : '/about',
+      show: BLOG.showAbout,
+      external: BLOG.aboutLink
+    },
+    // { id: 2, name: locale.NAV.RSS, to: '/feed', show: true, external: true },
+    {id: 3, name: locale.NAV.SEARCH, to: '/search', show: true}
   ]
   return (
     <div className="flex-shrink-0">
@@ -33,9 +39,9 @@ const NavBar = () => {
   )
 }
 
-export default function Header ({ navBarTitle, fullWidth }) {
+export default function Header({navBarTitle, fullWidth}) {
   const BLOG = useConfig()
-  const { dark } = useTheme()
+  const {dark} = useTheme()
 
   // Favicon
 
@@ -72,7 +78,7 @@ export default function Header ({ navBarTitle, fullWidth }) {
 
   const titleRef = useRef(/** @type {HTMLParagraphElement} */ undefined)
 
-  function handleClickHeader (/** @type {MouseEvent} */ ev) {
+  function handleClickHeader(/** @type {MouseEvent} */ ev) {
     if (![navRef.current, titleRef.current].includes(ev.target)) return
 
     window.scrollTo({
@@ -119,13 +125,13 @@ export default function Header ({ navBarTitle, fullWidth }) {
             onClick={handleClickHeader}
           />
         </div>
-        <NavBar />
+        <NavBar/>
       </div>
     </>
   )
 }
 
-const HeaderName = forwardRef(function HeaderName ({ siteTitle, siteDescription, postTitle, onClick }, ref) {
+const HeaderName = forwardRef(function HeaderName({siteTitle, siteDescription, postTitle, onClick}, ref) {
   return (
     <p
       ref={ref}

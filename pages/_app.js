@@ -1,6 +1,5 @@
 import App from "next/app";
 import dynamic from "next/dynamic";
-import { Analytics } from "@vercel/analytics/react";
 
 import loadLocale from "@/assets/i18n";
 import { ConfigProvider } from "@/lib/config";
@@ -15,28 +14,37 @@ import "katex/dist/katex.min.css";
 import "@/styles/globals.css";
 import "@/styles/notion.css";
 
-
 const Ackee = dynamic(() => import("@/components/Ackee"), { ssr: false });
 const Gtag = dynamic(() => import("@/components/Gtag"), { ssr: false });
+const { Analytics } = dynamic(() => import("@vercel/analytics/react"), {
+  ssr: false,
+});
 
 export default function MyApp({ Component, pageProps, config, locale }) {
+  const isProduction = process.env.VERCEL_ENV === "production";
+  const analyticProvider = config?.analytics?.provider ?? "";
+
   return (
     <ConfigProvider value={config}>
       <Scripts />
       <LocaleProvider value={locale}>
         <ThemeProvider>
           <>
-            {process.env.VERCEL_ENV === "production" &&
-              config?.analytics?.provider === "ackee" && (
-                <Ackee
-                  ackeeServerUrl={config.analytics.ackeeConfig.dataAckeeServer}
-                  ackeeDomainId={config.analytics.ackeeConfig.domainId}
-                />
-              )}
-            {process.env.VERCEL_ENV === "production" &&
-              config?.analytics?.provider === "ga" && <Gtag />}
+            {isProduction && (
+              <>
+                {analyticProvider === "ackee" && (
+                  <Ackee
+                    ackeeServerUrl={
+                      config.analytics.ackeeConfig.dataAckeeServer
+                    }
+                    ackeeDomainId={config.analytics.ackeeConfig.domainId}
+                  />
+                )}
+                {analyticProvider === "ga" && <Gtag />}
+                {analyticProvider === "vercel" && <Analytics />}
+              </>
+            )}
             <Component {...pageProps} />
-            <Analytics />
           </>
         </ThemeProvider>
       </LocaleProvider>
@@ -49,14 +57,14 @@ MyApp.getInitialProps = async (ctx) => {
     typeof window === "object"
       ? await fetch("/api/config").then((res) => res.json())
       : await import("@/lib/server/config").then(
-        (module) => module.clientConfig
-      );
+          (module) => module.clientConfig,
+        );
 
   prepareDayjs(config.timezone);
 
   return {
     ...App.getInitialProps(ctx),
     config,
-    locale: await loadLocale("basic", config.lang)
+    locale: await loadLocale("basic", config.lang),
   };
 };

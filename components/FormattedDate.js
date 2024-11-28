@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import localizedFormat from "dayjs/plugin/localizedFormat";
-import lang from "dayjs/locale/zh-CN";
+import lang from "dayjs/locale/zh-cn";
 
 dayjs.locale(lang);
 dayjs.extend(localizedFormat);

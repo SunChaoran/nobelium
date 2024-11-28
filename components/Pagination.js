@@ -1,14 +1,14 @@
-import Link from 'next/link'
-import { useConfig } from '@/lib/config'
-import { useLocale } from '@/lib/locale'
+import Link from "next/link";
+import { useConfig } from "@/lib/config";
+import { useLocale } from "@/lib/locale";
 
 const Pagination = ({ page, showNext }) => {
-  const BLOG = useConfig()
-  const locale = useLocale()
-  const currentPage = +page
-  let additionalClassName = 'justify-between'
-  if (currentPage === 1 && showNext) additionalClassName = 'justify-end'
-  if (currentPage !== 1 && !showNext) additionalClassName = 'justify-start'
+  const BLOG = useConfig();
+  const locale = useLocale();
+  const currentPage = +page;
+  let additionalClassName = "justify-between";
+  if (currentPage === 1 && showNext) additionalClassName = "justify-end";
+  if (currentPage !== 1 && !showNext) additionalClassName = "justify-start";
   return (
     <div
       className={`flex font-medium text-black dark:text-gray-100 ${additionalClassName}`}
@@ -17,7 +17,7 @@ const Pagination = ({ page, showNext }) => {
         <Link
           href={
             currentPage - 1 === 1
-              ? `${BLOG.path || '/'}`
+              ? `${BLOG.path || "/"}`
               : `/page/${currentPage - 1}`
           }
         >
@@ -34,7 +34,7 @@ const Pagination = ({ page, showNext }) => {
         </Link>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default Pagination
+export default Pagination;

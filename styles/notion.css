@@ -106,7 +106,7 @@ svg + .notion-page-title-text {
   @apply text-gray-600 dark:text-gray-300;
 }
 
-pre[class*='language-'] {
+pre[class*="language-"] {
   line-height: inherit;
 }
 
@@ -201,7 +201,7 @@ pre[class*='language-'] {
 }
 
 .nobelium-toggle ::marker {
-  content: '';
+  content: "";
 }
 
 .nobelium-toggle > summary {
@@ -226,7 +226,10 @@ pre[class*='language-'] {
   transform: rotateZ(90deg);
 }
 
-.nobelium-toggle[open]:not(.nobelium-toggle-empty) > * > .nobelium-toggle-triangle svg {
+.nobelium-toggle[open]:not(.nobelium-toggle-empty)
+  > *
+  > .nobelium-toggle-triangle
+  svg {
   transform: rotateZ(180deg);
 }
 

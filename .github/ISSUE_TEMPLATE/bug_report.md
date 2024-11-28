@@ -1,7 +1,7 @@
 ---
 name: Bug report
 about: Create a report to help Nobelium get better.
-title: ''
+title: ""
 labels: bug
 ---
 
@@ -35,6 +35,7 @@ labels: bug
 ## Software versions
 
   <!-- E.g. iOS 13, Android 11, macOS 12 -->
+
 - OS:
   <!-- E.g. Chrome 90, Safari 12.1, Firefox 87 -->
 - Browser:

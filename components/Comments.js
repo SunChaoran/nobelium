@@ -1,43 +1,45 @@
-import 'gitalk/dist/gitalk.css'
-import { useRouter } from 'next/router'
-import dynamic from 'next/dynamic'
-import cn from 'classnames'
-import { fetchCusdisLang } from '@/lib/cusdisLang'
-import { useConfig } from '@/lib/config'
+import { useRouter } from "next/router";
+import dynamic from "next/dynamic";
+import cn from "classnames";
+
+import "gitalk/dist/gitalk.css";
+
+import { fetchCusdisLang } from "@/lib/cusdisLang";
+import { useConfig } from "@/lib/config";
 
 const GitalkComponent = dynamic(
   () => {
-    return import('gitalk/dist/gitalk-component')
+    return import("gitalk/dist/gitalk-component");
   },
   { ssr: false }
-)
+);
 const UtterancesComponent = dynamic(
   () => {
-    return import('@/components/Utterances')
+    return import("@/components/Utterances");
   },
   { ssr: false }
-)
+);
 const CusdisComponent = dynamic(
   () => {
-    return import('react-cusdis').then(m => m.ReactCusdis)
+    return import("react-cusdis").then((m) => m.ReactCusdis);
   },
   { ssr: false }
-)
+);
 
 const Comments = ({ frontMatter }) => {
-  const router = useRouter()
-  const BLOG = useConfig()
+  const router = useRouter();
+  const BLOG = useConfig();
 
-  const fullWidth = frontMatter.fullWidth ?? false
+  const fullWidth = frontMatter.fullWidth ?? false;
 
   return (
     <div
       className={cn(
-        'px-4 font-medium text-gray-500 dark:text-gray-400 my-5',
-        fullWidth ? 'md:px-24' : 'mx-auto max-w-2xl',
+        "px-4 font-medium text-gray-500 dark:text-gray-400 my-5",
+        fullWidth ? "md:px-24" : "mx-auto max-w-2xl"
       )}
     >
-      {BLOG.comment && BLOG.comment.provider === 'gitalk' && (
+      {BLOG.comment && BLOG.comment.provider === "gitalk" && (
         <GitalkComponent
           options={{
             id: frontMatter.id,
@@ -51,10 +53,10 @@ const Comments = ({ frontMatter }) => {
           }}
         />
       )}
-      {BLOG.comment && BLOG.comment.provider === 'utterances' && (
+      {BLOG.comment && BLOG.comment.provider === "utterances" && (
         <UtterancesComponent issueTerm={frontMatter.id} />
       )}
-      {BLOG.comment && BLOG.comment.provider === 'cusdis' && (
+      {BLOG.comment && BLOG.comment.provider === "cusdis" && (
         <CusdisComponent
           lang={fetchCusdisLang(BLOG.lang)}
           attrs={{
@@ -68,7 +70,7 @@ const Comments = ({ frontMatter }) => {
         />
       )}
     </div>
-  )
-}
+  );
+};
 
-export default Comments
+export default Comments;

@@ -1,7 +1,7 @@
 ---
 name: Feature request
 about: Suggest an idea for Nobelium.
-title: ''
+title: ""
 labels: enhancement
 ---
 

@@ -17,6 +17,19 @@ class MyDocument extends Document {
       dark: "dark",
     }[config.appearance];
 
+    const getAccelerateAddress = (originAddress) => {
+      const addressMapping = {
+        ["https://cdnjs.cloudflare.com"]: "https://cdnjs.loli.net",
+        ["https://ajax.googleapis.com"]: "https://ajax.loli.net",
+        ["https://fonts.googleapis.com"]: "https://fonts.loli.net",
+        ["https://fonts.gstatic.com"]: "https://gstatic.loli.net",
+        ["https://themes.googleusercontent.com"]: "https://themes.loli.net",
+        ["https://secure.gravatar.com"]: "https://gravatar.loli.net",
+      };
+
+      return addressMapping[originAddress] ?? originAddress;
+    };
+
     return (
       <Html lang={config.lang} className={cn(initialColorScheme)}>
         <Head>
@@ -62,26 +75,26 @@ class MyDocument extends Document {
             <>
               <link
                 rel="preconnect"
-                href="https://fonts.gstatic.com"
+                href={getAccelerateAddress("https://fonts.gstatic.com")}
                 crossOrigin="anonymous"
               />
               <link
                 rel="preload"
                 as="style"
-                href={`https://fonts.googleapis.com/css2?family=Noto+${
+                href={`${getAccelerateAddress("https://fonts.googleapis.com")}/css2?family=Noto+${
                   config.font === "serif" ? "Serif" : "Sans"
                 }+${CJK()}:wght@400;500;700&display=swap`}
               />
               <link
                 rel="stylesheet"
-                href={`https://fonts.googleapis.com/css2?family=Noto+${
+                href={`${getAccelerateAddress("https://fonts.googleapis.com")}/css2?family=Noto+${
                   config.font === "serif" ? "Serif" : "Sans"
                 }+${CJK()}:wght@400;500;700&display=swap`}
               />
               <noscript>
                 <link
                   rel="stylesheet"
-                  href={`https://fonts.googleapis.com/css2?family=Noto+${
+                  href={`${getAccelerateAddress("https://fonts.googleapis.com")}/css2?family=Noto+${
                     config.font === "serif" ? "Serif" : "Sans"
                   }+${CJK()}:wght@400;500;700&display=swap`}
                 />

@@ -1,5 +1,7 @@
 import App from "next/app";
 import dynamic from "next/dynamic";
+import { Analytics } from "@vercel/analytics/react";
+import "prismjs";
 
 import loadLocale from "@/assets/i18n";
 import { ConfigProvider } from "@/lib/config";
@@ -9,6 +11,7 @@ import { ThemeProvider } from "@/lib/theme";
 import Scripts from "@/components/Scripts";
 
 import "prismjs/themes/prism.css";
+// import "prismjs/themes/prism-tomorrow.css";
 import "react-notion-x/src/styles.css";
 import "katex/dist/katex.min.css";
 import "@/styles/globals.css";
@@ -16,12 +19,9 @@ import "@/styles/notion.css";
 
 const Ackee = dynamic(() => import("@/components/Ackee"), { ssr: false });
 const Gtag = dynamic(() => import("@/components/Gtag"), { ssr: false });
-const { Analytics } = dynamic(() => import("@vercel/analytics/react"), {
-  ssr: false,
-});
 
 export default function MyApp({ Component, pageProps, config, locale }) {
-  const isProduction = process.env.VERCEL_ENV === "production";
+  const isProd = process.env.VERCEL_ENV === "production";
   const analyticProvider = config?.analytics?.provider ?? "";
 
   return (
@@ -30,7 +30,7 @@ export default function MyApp({ Component, pageProps, config, locale }) {
       <LocaleProvider value={locale}>
         <ThemeProvider>
           <>
-            {isProduction && (
+            {isProd && (
               <>
                 {analyticProvider === "ackee" && (
                   <Ackee

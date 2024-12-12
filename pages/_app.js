@@ -1,6 +1,7 @@
 import App from "next/app";
 import dynamic from "next/dynamic";
 import { Analytics } from "@vercel/analytics/react";
+import "prismjs";
 
 import loadLocale from "@/assets/i18n";
 import { ConfigProvider } from "@/lib/config";
@@ -10,6 +11,7 @@ import { ThemeProvider } from "@/lib/theme";
 import Scripts from "@/components/Scripts";
 
 import "prismjs/themes/prism.css";
+// import "prismjs/themes/prism-tomorrow.css";
 import "react-notion-x/src/styles.css";
 import "katex/dist/katex.min.css";
 import "@/styles/globals.css";

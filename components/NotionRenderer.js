@@ -1,113 +1,168 @@
-import { createElement as h } from "react";
+import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { NotionRenderer as Renderer } from "react-notion-x";
 import { getTextContent } from "notion-utils";
+import PropTypes from "prop-types";
 
 import Toggle from "@/components/notion-blocks/Toggle";
+import Loading from "@/components/Loading";
 import { FONTS_SANS, FONTS_SERIF } from "@/consts";
 import { useConfig } from "@/lib/config";
 
-// Lazy-load some heavy components & override the renderers of some block types
-const components = {
-  /* Lazy-load */
+const prismLanguageMap = {
+  javascript: "javascript",
+  js: "javascript",
+  jsx: "jsx",
+  typescript: "typescript",
+  ts: "typescript",
+  python: "python",
+  java: "java",
+  "markup-templating": "markup-templating",
+  markup: "markup",
+  html: "markup",
+  xml: "markup",
+  // 'plain text': "markdown",
+  bash: "bash",
+  shell: "bash",
+  c: "c",
+  "c++": "cpp",
+  cpp: "cpp",
+  "c#": "csharp",
+  csharp: "csharp",
+  docker: "docker",
+  "js-templates": "js-templates",
+  coffeescript: "coffeescript",
+  diff: "diff",
+  git: "git",
+  go: "go",
+  ruby: "ruby",
+  php: "php",
+  swift: "swift",
+  kotlin: "kotlin",
+  rust: "rust",
+  scala: "scala",
+  graphql: "graphql",
+  css: "css",
+  scss: "scss",
+  handlebars: "handlebars",
+  less: "less",
+  json: "json",
+  makefile: "makefile",
+  markdown: "markdown",
+  objectivec: "objectivec",
+  ocaml: "ocaml",
+  reason: "reason",
+  sass: "sass",
+  solidity: "solidity",
+  sql: "sql",
+  stylus: "stylus",
+  wasm: "wasm",
+  yaml: "yaml",
+};
 
-  // Code block
-  Code: dynamic(async () => {
-    return function CodeSwitch(props) {
-      switch (getTextContent(props.block.properties.language)) {
-        case "Mermaid":
-          return h(
-            dynamic(
-              () => {
-                return import("@/components/notion-blocks/Mermaid").then(
-                  (module) => module.default,
-                );
-              },
-              { ssr: false },
-            ),
-            props,
-          );
-        default:
-          return h(
-            dynamic(() => {
-              return import("react-notion-x/build/third-party/code").then(
-                async (module) => {
-                  // Additional prismjs syntax
-                  await Promise.all([
-                    import("prismjs/components/prism-markup-templating"),
-                    import("prismjs/components/prism-markup"),
-                    import("prismjs/components/prism-bash"),
-                    import("prismjs/components/prism-c"),
-                    import("prismjs/components/prism-cpp"),
-                    import("prismjs/components/prism-csharp"),
-                    import("prismjs/components/prism-docker"),
-                    import("prismjs/components/prism-java"),
-                    import("prismjs/components/prism-js-templates"),
-                    import("prismjs/components/prism-coffeescript"),
-                    import("prismjs/components/prism-diff"),
-                    import("prismjs/components/prism-git"),
-                    import("prismjs/components/prism-go"),
-                    import("prismjs/components/prism-graphql"),
-                    import("prismjs/components/prism-handlebars"),
-                    import("prismjs/components/prism-less"),
-                    import("prismjs/components/prism-makefile"),
-                    import("prismjs/components/prism-markdown"),
-                    import("prismjs/components/prism-objectivec"),
-                    import("prismjs/components/prism-ocaml"),
-                    import("prismjs/components/prism-python"),
-                    import("prismjs/components/prism-reason"),
-                    import("prismjs/components/prism-rust"),
-                    import("prismjs/components/prism-sass"),
-                    import("prismjs/components/prism-scss"),
-                    import("prismjs/components/prism-solidity"),
-                    import("prismjs/components/prism-sql"),
-                    import("prismjs/components/prism-stylus"),
-                    import("prismjs/components/prism-swift"),
-                    import("prismjs/components/prism-wasm"),
-                    import("prismjs/components/prism-yaml"),
-                  ]);
-                  return module.Code;
-                },
-              );
-            }),
-            props,
-          );
-      }
+const DynamicMermaid = dynamic(
+  () => import("@/components/notion-blocks/Mermaid"),
+  { ssr: false },
+);
+
+const DynamicCode = dynamic(
+  () =>
+    import("react-notion-x/build/third-party/code").then(
+      (_module) => _module.Code,
+    ),
+  { ssr: false },
+);
+
+const Collection = dynamic(() =>
+  import("react-notion-x/build/third-party/collection").then(
+    (_module) => _module.Collection,
+  ),
+);
+
+const Equation = dynamic(() =>
+  import("react-notion-x/build/third-party/equation").then(
+    (_module) => _module.Equation,
+  ),
+);
+
+const Pdf = dynamic(
+  () =>
+    import("react-notion-x/build/third-party/pdf").then(
+      (_module) => _module.Pdf,
+    ),
+  { ssr: false },
+);
+
+const Tweet = dynamic(() =>
+  import("react-tweet-embed").then((_module) => {
+    const { default: TweetEmbed } = _module;
+    return function TweetComponent({ id }) {
+      return <TweetEmbed tweetId={id} options={{ theme: "dark" }} />;
     };
   }),
-  // Database block
-  Collection: dynamic(() => {
-    return import("react-notion-x/build/third-party/collection").then(
-      (module) => module.Collection,
-    );
-  }),
-  // Equation block & inline variant
-  Equation: dynamic(() => {
-    return import("react-notion-x/build/third-party/equation").then(
-      (module) => module.Equation,
-    );
-  }),
-  // PDF (Embed block)
-  Pdf: dynamic(
-    () => {
-      return import("react-notion-x/build/third-party/pdf").then(
-        (module) => module.Pdf,
-      );
-    },
-    { ssr: false },
-  ),
-  // Tweet block
-  Tweet: dynamic(() => {
-    return import("react-tweet-embed").then((module) => {
-      const { default: TweetEmbed } = module;
-      return function Tweet({ id }) {
-        return <TweetEmbed tweetId={id} options={{ theme: "dark" }} />;
-      };
-    });
-  }),
+);
 
-  /* Overrides */
+const loadedLanguages = new Set();
 
+const loadPrismLanguage = async (language) => {
+  const prismLang = prismLanguageMap[language.toLowerCase()];
+  if (!prismLang) {
+    console.warn(`Code Renderer 不支持的语言: ${language}`);
+    return;
+  }
+  if (loadedLanguages.has(prismLang)) {
+    return;
+  }
+  try {
+    await import(`prismjs/components/prism-${prismLang}.js`);
+    loadedLanguages.add(prismLang);
+  } catch (error) {
+    console.error(`加载语言失败: ${prismLang}`, error);
+  }
+};
+
+function CodeSwitch(props) {
+  const [isLanguageLoaded, setIsLanguageLoaded] = useState(false);
+  const language = getTextContent(props.block.properties.language);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadLanguage = async () => {
+      if (language && language !== "Mermaid") {
+        await loadPrismLanguage(language);
+      }
+      if (isMounted) {
+        setIsLanguageLoaded(true);
+      }
+    };
+
+    loadLanguage();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [language]);
+
+  if (language === "Mermaid") {
+    return <DynamicMermaid {...props} />;
+  }
+
+  if (!isLanguageLoaded) {
+    return <Loading />;
+  }
+
+  return <DynamicCode {...props} />;
+}
+
+const Code = dynamic(() => Promise.resolve(CodeSwitch), { ssr: false });
+
+const components = {
+  Code,
+  Collection,
+  Equation,
+  Pdf,
+  Tweet,
   toggle_nobelium: ({ block, children }) => (
     <Toggle block={block}>{children}</Toggle>
   ),
@@ -115,42 +170,36 @@ const components = {
 
 const mapPageUrl = (id) => `https://www.notion.so/${id.replace(/-/g, "")}`;
 
-/**
- * Notion page renderer
- *
- * A wrapper of react-notion-x/NotionRenderer with predefined `components` and `mapPageUrl`
- *
- * @param props - Anything that react-notion-x/NotionRenderer supports
- */
+const mapBlockTypes = (recordMap) => {
+  if (!recordMap || !recordMap.block) return;
+
+  Object.values(recordMap.block).forEach(({ value: block }) => {
+    if (block?.type === "toggle") {
+      block.type = "toggle_nobelium";
+    }
+  });
+};
+
 export default function NotionRenderer(props) {
   const config = useConfig();
+  const font = config.font === "serif" ? FONTS_SERIF : FONTS_SANS;
 
-  const font = {
-    "sans-serif": FONTS_SANS,
-    serif: FONTS_SERIF,
-  }[config.font];
-
-  // Mark block types to be custom rendered by appending a suffix
-  if (props.recordMap) {
-    for (const { value: block } of Object.values(props.recordMap.block)) {
-      switch (block?.type) {
-        case "toggle":
-          block.type += "_nobelium";
-          break;
-      }
-    }
-  }
+  useEffect(() => {
+    mapBlockTypes(props.recordMap);
+  }, [props.recordMap]);
 
   return (
     <>
-      <style jsx global>
-        {`
-          .notion {
-            --notion-font: ${font};
-          }
-        `}
-      </style>
+      <style jsx global>{`
+        :root {
+          --font-family: ${font};
+        }
+      `}</style>
       <Renderer components={components} mapPageUrl={mapPageUrl} {...props} />
     </>
   );
 }
+
+NotionRenderer.propTypes = {
+  recordMap: PropTypes.object.isRequired,
+};
